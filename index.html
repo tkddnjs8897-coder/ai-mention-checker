@@ -129,6 +129,31 @@
     transition:width .6s ease;
   }
 
+  .grade-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:5px 13px;
+    border-radius:999px;
+    font-weight:800;
+    font-size:12.5px;
+    margin-left:12px;
+    vertical-align:middle;
+  }
+  .grade-badge.grade-a{background:rgba(61,220,151,.15); color:var(--good);}
+  .grade-badge.grade-b{background:rgba(108,140,255,.15); color:var(--accent);}
+  .grade-badge.grade-c{background:rgba(255,193,7,.15); color:#ffc107;}
+  .grade-badge.grade-d, .grade-badge.grade-f{background:rgba(255,108,108,.15); color:var(--bad);}
+
+  .compare-list{display:flex; flex-direction:column; gap:14px; margin-top:20px;}
+  .compare-label{display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); margin-bottom:6px;}
+  .compare-label b{color:var(--text); font-weight:700;}
+  .compare-track{height:8px; background:var(--panel2); border-radius:6px; overflow:hidden;}
+  .compare-fill{height:100%; border-radius:6px;}
+  .compare-fill.me{background:linear-gradient(90deg, var(--accent), var(--accent));}
+  .compare-fill.avg{background:var(--muted); opacity:.55;}
+  .compare-fill.potential{background:repeating-linear-gradient(45deg, var(--good), var(--good) 6px, rgba(61,220,151,.35) 6px, rgba(61,220,151,.35) 12px);}
+
   h2.section-title{
     font-size:15px;
     margin:0 0 14px;
@@ -167,6 +192,11 @@
   .pill.yes{background:rgba(61,220,151,.15); color:var(--good);}
   .pill.no{background:rgba(255,108,108,.15); color:var(--bad);}
 
+  .score-cell{display:flex; align-items:center; gap:8px;}
+  .score-bar{width:56px; height:6px; background:var(--panel2); border-radius:4px; overflow:hidden; flex-shrink:0;}
+  .score-bar-fill{height:100%; background:var(--accent); border-radius:4px;}
+  .score-num{font-size:12px; color:var(--muted); min-width:28px;}
+
   .comp-list{list-style:none; padding:0; margin:0; font-size:13px;}
   .comp-list li{
     padding:10px 0;
@@ -178,6 +208,16 @@
   .comp-list li:last-child{border-bottom:none;}
   .comp-name{font-weight:700;}
   .comp-note{color:var(--muted); text-align:right;}
+
+  table.comp-table{width:100%; border-collapse:collapse; font-size:13px;}
+  table.comp-table th, table.comp-table td{text-align:left; padding:9px 8px; border-bottom:1px solid var(--border);}
+  table.comp-table th{color:var(--muted); font-weight:600;}
+  table.comp-table tr.me td{color:var(--accent); font-weight:800;}
+  table.comp-table tr:last-child td{border-bottom:none;}
+  .comp-rate-cell{display:flex; align-items:center; gap:8px;}
+  .comp-mini-track{width:72px; height:6px; background:var(--panel2); border-radius:4px; overflow:hidden; flex-shrink:0;}
+  .comp-mini-fill{height:100%; border-radius:4px; background:var(--muted);}
+  .comp-mini-fill.me{background:var(--accent);}
 
   .imp-card{
     background:var(--panel2);
@@ -198,6 +238,19 @@
     font-size:16px;
     font-weight:700;
     margin:0 0 8px;
+    display:flex;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .imp-impact{
+    display:inline-block;
+    font-size:12px;
+    font-weight:800;
+    padding:2px 9px;
+    border-radius:999px;
+    background:rgba(61,220,151,.15);
+    color:var(--good);
   }
   .imp-detail{
     font-size:13.5px;
@@ -240,6 +293,18 @@
   }
   button.copy:hover{filter:brightness(1.15);}
   button.copy.copied{background:var(--good); color:#0b0d12; border-color:var(--good);}
+
+  .cta-card{
+    background:linear-gradient(135deg, rgba(108,140,255,.14), rgba(61,220,151,.10));
+    border:1px solid var(--accent);
+    border-radius:var(--radius);
+    padding:28px 22px;
+    text-align:center;
+    margin-bottom:20px;
+  }
+  .cta-card h3{margin:0 0 10px; font-size:15px; color:var(--muted); font-weight:700;}
+  .cta-card .cta-num{font-size:38px; font-weight:800; color:var(--good); margin:4px 0 10px;}
+  .cta-card p{margin:0; color:var(--muted); font-size:13px;}
 
   .spinner{
     display:inline-block;
@@ -293,25 +358,31 @@
 
   <div id="result">
     <div class="card">
-      <h2 class="section-title">AI 언급률</h2>
+      <h2 class="section-title">AI 언급률<span class="grade-badge" id="gradeBadge"></span></h2>
       <div class="rate-box">
         <div class="rate-num" id="rateNum">0%</div>
         <div class="bar-track"><div class="bar-fill" id="rateBar" style="width:0%"></div></div>
       </div>
+      <div class="compare-list" id="compareList"></div>
     </div>
 
     <div class="card">
       <h2 class="section-title">키워드별 언급 여부</h2>
       <table class="kw">
-        <thead><tr><th>키워드</th><th>언급</th><th>비고</th></tr></thead>
+        <thead><tr><th>키워드</th><th>언급</th><th>점수</th><th>비고</th></tr></thead>
         <tbody id="kwBody"></tbody>
       </table>
     </div>
 
     <div class="card">
       <h2 class="section-title">경쟁업체 노출 현황 <span class="badge">위기감 체크</span></h2>
-      <ul class="comp-list" id="compList"></ul>
+      <table class="comp-table">
+        <thead><tr><th>업체</th><th>AI 언급률</th><th>비고</th></tr></thead>
+        <tbody id="compBody"></tbody>
+      </table>
     </div>
+
+    <div class="cta-card" id="ctaCard"></div>
 
     <div class="card">
       <h2 class="section-title">개선 제안 <span class="badge" id="impBadge">0개</span></h2>
@@ -370,18 +441,20 @@ function buildPrompt(meta){
 
 {
   "mention_rate": (0~100 사이 정수, AI가 관련 질문에 이 업체를 언급할 것으로 추정되는 비율),
+  "industry_avg_rate": (0~100 사이 정수, 이 업종 전체의 평균적인 AI 언급률 추정치. 비교 기준선으로 씀),
+  "potential_rate": (0~100 사이 정수, 아래 improvements를 전부 개선했을 때 도달 가능한 예상 언급률. 반드시 mention_rate보다 15~40 정도 더 높게 설정),
   "keywords": [
-    { "keyword": "키워드", "mentioned": true|false, "note": "이 키워드에서 언급되거나 안되는 이유, 20자 내외 간단히" }
+    { "keyword": "키워드", "mentioned": true|false, "score": (0~100 사이 정수, 이 키워드에서의 노출 정도 점수), "note": "이 키워드에서 언급되거나 안되는 이유, 20자 내외 간단히" }
   ],
   "competitors": [
-    { "name": "경쟁업체명 또는 유형", "note": "이 업체가 왜 더 노출되는지 또는 어떤 강점을 갖는지, 20~30자" }
+    { "name": "경쟁업체명 또는 유형", "mention_rate": (0~100 사이 정수, 이 경쟁업체의 추정 AI 언급률. mention_rate보다 대체로 높게), "note": "이 업체가 왜 더 노출되는지 또는 어떤 강점을 갖는지, 20~30자" }
   ],
   "improvements": [
-    { "title": "문제를 짧게 명명한 제목 (해결책은 드러내지 않음, 12자 내외)", "detail": "구체적인 해결 방법, 실행 가능한 수준으로 2~3문장" }
+    { "title": "문제를 짧게 명명한 제목 (해결책은 드러내지 않음, 12자 내외)", "impact": "이 항목만 개선했을 때 예상 상승폭, 반드시 \"+N%p\" 형식 (예: \"+12%p\")", "detail": "구체적인 해결 방법, 실행 가능한 수준으로 2~3문장" }
   ]
 }
 
-keywords는 입력된 모든 키워드에 대해 각각 생성하고, competitors는 2~4개, improvements는 4~5개 생성하세요.`;
+keywords는 입력된 모든 키워드에 대해 각각 생성하고, competitors는 2~4개, improvements는 4~5개 생성하세요. improvements의 impact 합은 potential_rate - mention_rate와 대략 비슷하게 맞추세요.`;
 }
 
 async function callClaude(apiKey, prompt){
@@ -419,46 +492,93 @@ async function callClaude(apiKey, prompt){
   }
 }
 
+function gradeFor(rate){
+  if (rate >= 70) return { label: 'A · 우수', cls: 'grade-a' };
+  if (rate >= 50) return { label: 'B · 양호', cls: 'grade-b' };
+  if (rate >= 30) return { label: 'C · 보통', cls: 'grade-c' };
+  if (rate >= 15) return { label: 'D · 위험', cls: 'grade-d' };
+  return { label: 'F · 매우 위험', cls: 'grade-f' };
+}
+
+function compareListHtml(data){
+  const avg = data.industry_avg_rate ?? data.mention_rate;
+  const potential = data.potential_rate ?? data.mention_rate;
+  return `
+    <div>
+      <div class="compare-label"><span>내 언급률</span><b>${data.mention_rate}%</b></div>
+      <div class="compare-track"><div class="compare-fill me" style="width:${data.mention_rate}%"></div></div>
+    </div>
+    <div>
+      <div class="compare-label"><span>업종 평균</span><b>${avg}%</b></div>
+      <div class="compare-track"><div class="compare-fill avg" style="width:${avg}%"></div></div>
+    </div>
+    <div>
+      <div class="compare-label"><span>개선 시 도달 가능</span><b>${potential}%</b></div>
+      <div class="compare-track"><div class="compare-fill potential" style="width:${potential}%"></div></div>
+    </div>`;
+}
+
+function kwRowHtml(k){
+  const score = k.score ?? (k.mentioned ? 70 : 20);
+  return `<tr><td>${escapeHtml(k.keyword)}</td>
+      <td><span class="pill ${k.mentioned ? 'yes':'no'}">${k.mentioned ? '언급됨' : '언급 안됨'}</span></td>
+      <td><div class="score-cell"><div class="score-bar"><div class="score-bar-fill" style="width:${score}%"></div></div><span class="score-num">${score}</span></div></td>
+      <td>${escapeHtml(k.note || '')}</td></tr>`;
+}
+
+function compRowHtml(data, meta){
+  const rows = [{ name: meta.bizName + ' (나)', mention_rate: data.mention_rate, note: '현재 진단 결과', me: true }]
+    .concat((data.competitors || []).map(c => ({ name: c.name, mention_rate: c.mention_rate ?? 0, note: c.note || '', me: false })));
+  rows.sort((a,b) => b.mention_rate - a.mention_rate);
+  return rows.map(r => `<tr class="${r.me ? 'me' : ''}">
+      <td>${escapeHtml(r.name)}</td>
+      <td><div class="comp-rate-cell"><div class="comp-mini-track"><div class="comp-mini-fill ${r.me ? 'me':''}" style="width:${r.mention_rate}%"></div></div><span>${r.mention_rate}%</span></div></td>
+      <td>${escapeHtml(r.note)}</td>
+    </tr>`).join('');
+}
+
+function impCardHtml(imp, i, locked){
+  const detailHtml = locked
+    ? `<p class="imp-detail locked">${escapeHtml(imp.detail)}</p><p class="lock-note">🔒 구체적인 개선 방법은 유료 리포트에서 확인하실 수 있습니다</p>`
+    : `<p class="imp-detail">${escapeHtml(imp.detail)}</p>`;
+  const impactHtml = imp.impact ? `<span class="imp-impact">${escapeHtml(imp.impact)}</span>` : '';
+  return `<div class="imp-card">
+      <div class="imp-num">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <p class="imp-title">${escapeHtml(imp.title)}${impactHtml}</p>
+        ${detailHtml}
+      </div>
+    </div>`;
+}
+
+function ctaCardHtml(data){
+  const potential = data.potential_rate ?? data.mention_rate;
+  const gap = Math.max(0, potential - data.mention_rate);
+  return `
+    <h3>지금 개선하면 AI 언급률이 이만큼 오를 수 있어요</h3>
+    <div class="cta-num">${data.mention_rate}% → ${potential}%</div>
+    <p>개선 제안 ${(data.improvements||[]).length}가지를 반영하면 최대 +${gap}%p까지 상승 가능한 것으로 추정됩니다.</p>`;
+}
+
 function renderResult(data, meta){
   currentData = data;
   currentMeta = meta;
 
   $('rateNum').textContent = data.mention_rate + '%';
   $('rateBar').style.width = data.mention_rate + '%';
+  const grade = gradeFor(data.mention_rate);
+  $('gradeBadge').textContent = grade.label;
+  $('gradeBadge').className = 'grade-badge ' + grade.cls;
+  $('compareList').innerHTML = compareListHtml(data);
 
-  const kwBody = $('kwBody');
-  kwBody.innerHTML = '';
-  (data.keywords || []).forEach(k => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${escapeHtml(k.keyword)}</td>
-      <td><span class="pill ${k.mentioned ? 'yes':'no'}">${k.mentioned ? '언급됨' : '언급 안됨'}</span></td>
-      <td>${escapeHtml(k.note || '')}</td>`;
-    kwBody.appendChild(tr);
-  });
+  $('kwBody').innerHTML = (data.keywords || []).map(kwRowHtml).join('');
+  $('compBody').innerHTML = compRowHtml(data, meta);
 
-  const compList = $('compList');
-  compList.innerHTML = '';
-  (data.competitors || []).forEach(c => {
-    const li = document.createElement('li');
-    li.innerHTML = `<span class="comp-name">${escapeHtml(c.name)}</span><span class="comp-note">${escapeHtml(c.note || '')}</span>`;
-    compList.appendChild(li);
-  });
-
-  const impList = $('impList');
-  impList.innerHTML = '';
   const improvements = data.improvements || [];
   $('impBadge').textContent = improvements.length + '개';
-  improvements.forEach((imp, i) => {
-    const card = document.createElement('div');
-    card.className = 'imp-card';
-    card.innerHTML = `
-      <div class="imp-num">${String(i+1).padStart(2,'0')}</div>
-      <div>
-        <p class="imp-title">${escapeHtml(imp.title)}</p>
-        <p class="imp-detail">${escapeHtml(imp.detail)}</p>
-      </div>`;
-    impList.appendChild(card);
-  });
+  $('impList').innerHTML = improvements.map((imp, i) => impCardHtml(imp, i, false)).join('');
+
+  $('ctaCard').innerHTML = ctaCardHtml(data);
 
   $('result').style.display = 'block';
   $('result').scrollIntoView({behavior:'smooth', block:'start'});
@@ -469,39 +589,49 @@ function escapeHtml(s){
 }
 
 function buildFreeReport(data, meta){
+  const grade = gradeFor(data.mention_rate);
+  const avg = data.industry_avg_rate ?? data.mention_rate;
+  const potential = data.potential_rate ?? data.mention_rate;
   const lines = [];
   lines.push(`[AI 언급률 진단 리포트] ${meta.bizName}`);
   lines.push('');
-  lines.push(`AI 언급률: ${data.mention_rate}%`);
+  lines.push(`AI 언급률: ${data.mention_rate}% (${grade.label})`);
+  lines.push(`업종 평균: ${avg}%`);
+  lines.push(`개선 시 도달 가능: ${potential}% (+${Math.max(0, potential - data.mention_rate)}%p)`);
   lines.push('');
   lines.push('■ 키워드별 언급 여부');
-  (data.keywords||[]).forEach(k => lines.push(`- ${k.keyword}: ${k.mentioned ? '언급됨' : '언급 안됨'} (${k.note||''})`));
+  (data.keywords||[]).forEach(k => lines.push(`- ${k.keyword}: ${k.mentioned ? '언급됨' : '언급 안됨'} (점수 ${k.score ?? '-'}점, ${k.note||''})`));
   lines.push('');
   lines.push('■ 경쟁업체 노출 현황');
-  (data.competitors||[]).forEach(c => lines.push(`- ${c.name}: ${c.note||''}`));
+  (data.competitors||[]).forEach(c => lines.push(`- ${c.name}: ${c.mention_rate ?? '-'}% (${c.note||''})`));
   lines.push('');
   lines.push('■ 개선 제안 (미리보기)');
-  (data.improvements||[]).forEach((imp,i) => lines.push(`${i+1}. ${imp.title}`));
+  (data.improvements||[]).forEach((imp,i) => lines.push(`${i+1}. ${imp.title} (${imp.impact || ''})`));
   lines.push('');
   lines.push('→ 구체적인 개선 방법은 유료 리포트에서 확인하실 수 있습니다.');
   return lines.join('\n');
 }
 
 function buildPaidReport(data, meta){
+  const grade = gradeFor(data.mention_rate);
+  const avg = data.industry_avg_rate ?? data.mention_rate;
+  const potential = data.potential_rate ?? data.mention_rate;
   const lines = [];
   lines.push(`[AI 언급률 진단 리포트 - 전체] ${meta.bizName}`);
   lines.push('');
-  lines.push(`AI 언급률: ${data.mention_rate}%`);
+  lines.push(`AI 언급률: ${data.mention_rate}% (${grade.label})`);
+  lines.push(`업종 평균: ${avg}%`);
+  lines.push(`개선 시 도달 가능: ${potential}% (+${Math.max(0, potential - data.mention_rate)}%p)`);
   lines.push('');
   lines.push('■ 키워드별 언급 여부');
-  (data.keywords||[]).forEach(k => lines.push(`- ${k.keyword}: ${k.mentioned ? '언급됨' : '언급 안됨'} (${k.note||''})`));
+  (data.keywords||[]).forEach(k => lines.push(`- ${k.keyword}: ${k.mentioned ? '언급됨' : '언급 안됨'} (점수 ${k.score ?? '-'}점, ${k.note||''})`));
   lines.push('');
   lines.push('■ 경쟁업체 노출 현황');
-  (data.competitors||[]).forEach(c => lines.push(`- ${c.name}: ${c.note||''}`));
+  (data.competitors||[]).forEach(c => lines.push(`- ${c.name}: ${c.mention_rate ?? '-'}% (${c.note||''})`));
   lines.push('');
   lines.push('■ 개선 제안 (전체)');
   (data.improvements||[]).forEach((imp,i) => {
-    lines.push(`${i+1}. ${imp.title}`);
+    lines.push(`${i+1}. ${imp.title} (${imp.impact || ''})`);
     lines.push(`   → ${imp.detail}`);
   });
   return lines.join('\n');
@@ -617,45 +747,35 @@ function renderCustomerView(payload){
   const cv = document.getElementById('customerView');
   cv.style.display = 'block';
 
-  const kwRows = (data.keywords || []).map(k => `
-    <tr><td>${escapeHtml(k.keyword)}</td>
-      <td><span class="pill ${k.mentioned ? 'yes':'no'}">${k.mentioned ? '언급됨' : '언급 안됨'}</span></td>
-      <td>${escapeHtml(k.note || '')}</td></tr>`).join('');
-
-  const compItems = (data.competitors || []).map(c => `
-    <li><span class="comp-name">${escapeHtml(c.name)}</span><span class="comp-note">${escapeHtml(c.note || '')}</span></li>`).join('');
-
-  const impCards = (data.improvements || []).map((imp, i) => {
-    const detailHtml = tier === 'paid'
-      ? `<p class="imp-detail">${escapeHtml(imp.detail)}</p>`
-      : `<p class="imp-detail locked">${escapeHtml(imp.detail)}</p><p class="lock-note">🔒 구체적인 개선 방법은 유료 리포트에서 확인하실 수 있습니다</p>`;
-    return `<div class="imp-card">
-      <div class="imp-num">${String(i+1).padStart(2,'0')}</div>
-      <div><p class="imp-title">${escapeHtml(imp.title)}</p>${detailHtml}</div>
-    </div>`;
-  }).join('');
+  const grade = gradeFor(data.mention_rate);
+  const kwRows = (data.keywords || []).map(kwRowHtml).join('');
+  const compRows = compRowHtml(data, meta);
+  const impCards = (data.improvements || []).map((imp, i) => impCardHtml(imp, i, tier !== 'paid')).join('');
 
   cv.innerHTML = `
     <h1>${escapeHtml(meta.bizName || '')} AI 노출 진단 리포트</h1>
     <p class="sub">${tier === 'paid' ? '유료 전체 리포트' : '무료 진단 리포트 · 개선 방법은 잠겨 있습니다'}</p>
 
     <div class="card">
-      <h2 class="section-title">AI 언급률</h2>
+      <h2 class="section-title">AI 언급률<span class="grade-badge ${grade.cls}">${grade.label}</span></h2>
       <div class="rate-box">
         <div class="rate-num">${data.mention_rate}%</div>
         <div class="bar-track"><div class="bar-fill" style="width:${data.mention_rate}%"></div></div>
       </div>
+      <div class="compare-list">${compareListHtml(data)}</div>
     </div>
 
     <div class="card">
       <h2 class="section-title">키워드별 언급 여부</h2>
-      <table class="kw"><thead><tr><th>키워드</th><th>언급</th><th>비고</th></tr></thead><tbody>${kwRows}</tbody></table>
+      <table class="kw"><thead><tr><th>키워드</th><th>언급</th><th>점수</th><th>비고</th></tr></thead><tbody>${kwRows}</tbody></table>
     </div>
 
     <div class="card">
       <h2 class="section-title">경쟁업체 노출 현황</h2>
-      <ul class="comp-list">${compItems}</ul>
+      <table class="comp-table"><thead><tr><th>업체</th><th>AI 언급률</th><th>비고</th></tr></thead><tbody>${compRows}</tbody></table>
     </div>
+
+    ${tier !== 'paid' ? `<div class="cta-card">${ctaCardHtml(data)}</div>` : ''}
 
     <div class="card">
       <h2 class="section-title">개선 제안</h2>
