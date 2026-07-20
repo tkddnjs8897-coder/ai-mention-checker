@@ -664,7 +664,7 @@ function renderCustomerView(payload){
   `;
 }
 
-(function initFromHash(){
+function checkHashAndRenderCustomerView(){
   if (location.hash.startsWith('#r=')){
     try{
       renderCustomerView(decodePayload(location.hash.slice(3)));
@@ -672,7 +672,9 @@ function renderCustomerView(payload){
       console.error('공유 링크 데이터를 읽지 못했습니다.', e);
     }
   }
-})();
+}
+checkHashAndRenderCustomerView();
+window.addEventListener('hashchange', checkHashAndRenderCustomerView);
 </script>
 </body>
 </html>
