@@ -38,8 +38,21 @@
   }
   .sub{
     color:var(--muted);
-    margin:0 0 28px;
+    margin:0 0 12px;
     font-size:16px;
+  }
+  .disclaimer{
+    display:inline-flex;
+    align-items:flex-start;
+    gap:8px;
+    color:var(--muted);
+    font-size:13px;
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:10px 14px;
+    margin:0 0 28px;
+    line-height:1.5;
   }
   .card{
     background:var(--panel);
@@ -388,6 +401,7 @@
 <div class="wrap" id="adminView">
   <h1>AI 언급률 진단</h1>
   <p class="sub">ChatGPT · Perplexity · Claude 같은 AI가 우리 업체를 얼마나 언급하는지 추정하고, 개선 방향을 제안합니다.</p>
+  <div class="disclaimer">⚠️ <span>본 리포트는 AI가 업체 정보를 바탕으로 추정한 진단 결과이며, 실시간으로 실제 AI 검색을 조회한 값이 아닙니다.</span></div>
 
   <details class="apikey">
     <summary>Anthropic API 키 설정</summary>
@@ -691,6 +705,7 @@ function buildFreeReport(data, meta){
   lines.push(`AI 언급률: ${data.mention_rate}% (${grade.label})`);
   lines.push(`업종 평균: ${avg}%`);
   lines.push(`개선 시 도달 가능: ${potential}% (+${Math.max(0, potential - data.mention_rate)}%p)`);
+  lines.push('※ 본 리포트는 AI가 추정한 진단 결과이며, 실시간 실제 검색 결과가 아닙니다.');
   lines.push('');
   lines.push('■ 키워드별 언급 여부');
   (data.keywords||[]).forEach(k => lines.push(`- ${k.keyword}: ${k.mentioned ? '언급됨' : '언급 안됨'} (점수 ${k.score ?? '-'}점, ${k.note||''})`));
@@ -715,6 +730,7 @@ function buildPaidReport(data, meta){
   lines.push(`AI 언급률: ${data.mention_rate}% (${grade.label})`);
   lines.push(`업종 평균: ${avg}%`);
   lines.push(`개선 시 도달 가능: ${potential}% (+${Math.max(0, potential - data.mention_rate)}%p)`);
+  lines.push('※ 본 리포트는 AI가 추정한 진단 결과이며, 실시간 실제 검색 결과가 아닙니다.');
   lines.push('');
   lines.push('■ 키워드별 언급 여부');
   (data.keywords||[]).forEach(k => lines.push(`- ${k.keyword}: ${k.mentioned ? '언급됨' : '언급 안됨'} (점수 ${k.score ?? '-'}점, ${k.note||''})`));
@@ -854,6 +870,7 @@ function renderCustomerView(payload){
   cv.innerHTML = `
     <h1>${escapeHtml(meta.bizName || '')} AI 노출 진단 리포트</h1>
     <p class="sub">${tier === 'paid' ? '유료 전체 리포트' : '무료 진단 리포트 · 개선 방법은 잠겨 있습니다'}</p>
+    <div class="disclaimer">⚠️ <span>본 리포트는 AI가 업체 정보를 바탕으로 추정한 진단 결과이며, 실시간으로 실제 AI 검색을 조회한 값이 아닙니다.</span></div>
 
     <div class="card">
       <h2 class="section-title">AI 언급률<span class="grade-badge ${grade.cls}">${grade.label}</span></h2>
