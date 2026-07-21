@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AI 언급률 진단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="stylesheet" as="style" crossorigin="" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
 <style>
   :root{
     --bg:#0f1115;
@@ -395,6 +397,147 @@
     margin-right:8px;
   }
   @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ================= 고객용 결과 페이지 (눈도장 랜딩페이지와 통일된 톤) ================= */
+  #customerView{
+    --nj-paper:#FAF8F4;
+    --nj-paper-dim:#F1ECE1;
+    --nj-ink:#221E3B;
+    --nj-ink-soft:#544F73;
+    --nj-rule:#E3DED0;
+    --nj-red:#FF5B4C;
+    --nj-green:#1FAE7A;
+    --nj-amber:#E0A100;
+    background:var(--nj-paper);
+    color:var(--nj-ink);
+    font-family:'Pretendard Variable','Noto Sans KR',sans-serif;
+    font-weight:500;
+    line-height:1.65;
+    min-height:100vh;
+    padding:32px 0 90px;
+  }
+  #customerView .nj-wrap{max-width:720px; margin:0 auto; padding:0 22px;}
+  #customerView .nj-header{
+    display:flex; align-items:center; gap:9px;
+    font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:19px;
+    letter-spacing:0.03em; margin-bottom:30px;
+  }
+  #customerView .nj-logo-stamp{
+    width:19px; height:19px; flex-shrink:0;
+    border:2px solid var(--nj-red); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-10deg); font-size:11px; color:var(--nj-red); font-weight:700;
+  }
+  #customerView .nj-doclabel{
+    font-family:'IBM Plex Mono', monospace; font-weight:600; font-size:12.5px; color:var(--nj-ink-soft);
+    letter-spacing:0.14em; text-transform:uppercase;
+    display:flex; align-items:center; gap:10px; margin-bottom:20px;
+  }
+  #customerView .nj-doclabel .nj-line{flex:1; height:1px; background:var(--nj-rule);}
+  #customerView h1.nj-h1{
+    font-weight:800; font-size:clamp(26px, 4.4vw, 36px); line-height:1.25; letter-spacing:-0.01em;
+    margin-bottom:10px;
+  }
+  #customerView .nj-sub{font-size:15.5px; color:var(--nj-ink-soft); margin-bottom:16px;}
+  #customerView .nj-disclaimer{
+    display:flex; gap:8px; align-items:flex-start;
+    font-size:12.5px; color:var(--nj-ink-soft);
+    background:#fff; border:1px solid var(--nj-rule); border-radius:8px;
+    padding:10px 13px; margin-bottom:26px; line-height:1.5;
+  }
+
+  #customerView .nj-report{
+    background:#fff; border:1.5px solid var(--nj-ink); border-radius:20px;
+    padding:26px; margin-bottom:22px; position:relative;
+    box-shadow:6px 6px 0 rgba(34,30,59,0.08);
+  }
+  #customerView .nj-stamp{
+    position:absolute; top:-16px; right:-12px;
+    width:74px; height:74px; border:2.5px solid var(--nj-red); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-14deg); background:var(--nj-paper);
+    font-weight:800; font-size:11.5px; color:var(--nj-red); text-align:center; line-height:1.4;
+  }
+  #customerView .nj-report-eyebrow{font-size:13px; color:var(--nj-ink-soft); font-weight:600; margin-bottom:10px;}
+  #customerView .nj-rate-row{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  #customerView .nj-rate-num{font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:52px; color:var(--nj-ink); line-height:1;}
+  #customerView .nj-grade{
+    display:inline-flex; align-items:center; padding:6px 15px; border-radius:100px;
+    font-weight:800; font-size:14px;
+  }
+  #customerView .nj-grade.a{background:rgba(31,174,122,.13); color:var(--nj-green);}
+  #customerView .nj-grade.b{background:rgba(34,30,59,.08); color:var(--nj-ink);}
+  #customerView .nj-grade.c{background:rgba(224,161,0,.15); color:var(--nj-amber);}
+  #customerView .nj-grade.d, #customerView .nj-grade.f{background:rgba(255,91,76,.13); color:var(--nj-red);}
+
+  #customerView .nj-compare-list{display:flex; flex-direction:column; gap:10px; margin-top:22px;}
+  #customerView .nj-compare-item{background:var(--nj-paper-dim); border-radius:10px; padding:13px 15px;}
+  #customerView .nj-compare-label{display:flex; justify-content:space-between; font-size:13.5px; color:var(--nj-ink-soft); font-weight:600; margin-bottom:8px;}
+  #customerView .nj-compare-label b{color:var(--nj-ink); font-weight:800; font-size:16px;}
+  #customerView .nj-compare-track{height:10px; background:#fff; border-radius:6px; overflow:hidden;}
+  #customerView .nj-compare-fill{height:100%; border-radius:6px;}
+  #customerView .nj-compare-fill.me{background:var(--nj-ink);}
+  #customerView .nj-compare-fill.avg{background:#B9B3D6;}
+  #customerView .nj-compare-fill.potential{background:repeating-linear-gradient(45deg, var(--nj-green), var(--nj-green) 6px, rgba(31,174,122,.35) 6px, rgba(31,174,122,.35) 12px);}
+
+  #customerView .nj-card{
+    background:#fff; border:1.5px solid var(--nj-ink); border-radius:18px;
+    padding:22px; margin-bottom:20px;
+  }
+  #customerView .nj-card h2{font-weight:800; font-size:18px; margin-bottom:14px;}
+
+  #customerView table{width:100%; border-collapse:collapse; font-size:14px;}
+  #customerView table th, #customerView table td{text-align:left; padding:10px 8px; border-bottom:1px solid var(--nj-rule);}
+  #customerView table th{color:var(--nj-ink-soft); font-weight:600; font-size:12.5px;}
+  #customerView table tr:last-child td{border-bottom:none;}
+  #customerView .nj-pill{display:inline-block; padding:3px 10px; border-radius:100px; font-size:12.5px; font-weight:700;}
+  #customerView .nj-pill.yes{background:rgba(31,174,122,.13); color:var(--nj-green);}
+  #customerView .nj-pill.no{background:rgba(255,91,76,.11); color:var(--nj-red);}
+  #customerView .nj-score-track{width:52px; height:6px; background:var(--nj-paper-dim); border-radius:4px; overflow:hidden; display:inline-block; vertical-align:middle;}
+  #customerView .nj-score-fill{height:100%; background:var(--nj-ink);}
+  #customerView tr.me td{color:var(--nj-red); font-weight:800;}
+
+  #customerView .nj-plan-table th, #customerView .nj-plan-table td{text-align:center;}
+  #customerView .nj-plan-table th:first-child, #customerView .nj-plan-table td:first-child{text-align:left;}
+  #customerView .nj-plan-table .nj-yes{color:var(--nj-green); font-weight:800;}
+  #customerView .nj-plan-table .nj-no{color:var(--nj-ink-soft);}
+  #customerView .nj-plan-table th.nj-paid-col{color:var(--nj-red);}
+
+  #customerView .nj-cta{
+    background:linear-gradient(135deg, rgba(255,91,76,.10), rgba(31,174,122,.08));
+    border:1.5px solid var(--nj-ink); border-radius:20px;
+    padding:28px 24px; text-align:center; margin-bottom:22px;
+  }
+  #customerView .nj-cta h3{font-size:16px; font-weight:700; color:var(--nj-ink-soft); margin-bottom:8px;}
+  #customerView .nj-cta .nj-cta-num{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:34px; color:var(--nj-green); margin-bottom:8px;}
+  #customerView .nj-cta p{font-size:13.5px; color:var(--nj-ink-soft);}
+
+  #customerView .nj-imp-card{
+    background:var(--nj-paper-dim); border:1px solid var(--nj-rule); border-radius:14px;
+    padding:18px; margin-bottom:12px; display:flex; gap:14px;
+  }
+  #customerView .nj-imp-num{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:20px; color:var(--nj-ink-soft); min-width:30px;}
+  #customerView .nj-imp-title{font-weight:700; font-size:15.5px; margin-bottom:6px; display:flex; align-items:center; flex-wrap:wrap; gap:8px;}
+  #customerView .nj-imp-impact{font-size:12px; font-weight:800; padding:2px 9px; border-radius:100px; background:rgba(31,174,122,.13); color:var(--nj-green);}
+  #customerView .nj-imp-detail{font-size:13.5px; color:var(--nj-ink-soft);}
+  #customerView .nj-locked{filter:blur(4px); user-select:none; pointer-events:none;}
+  #customerView .nj-lock-note{font-size:12.5px; color:var(--nj-red); font-weight:700; margin-top:8px;}
+
+  #customerView .nj-final-cta{
+    background:var(--nj-ink); border-radius:20px; padding:34px 26px; text-align:center; color:var(--nj-paper);
+  }
+  #customerView .nj-final-cta h3{font-size:21px; font-weight:800; margin-bottom:10px; line-height:1.4;}
+  #customerView .nj-final-cta p{font-size:14px; color:#B9C2D6; margin-bottom:20px;}
+  #customerView .nj-final-btn{
+    display:inline-block; background:var(--nj-red); color:#fff; text-decoration:none;
+    font-weight:700; font-size:16px; padding:15px 30px; border-radius:100px;
+  }
+  #customerView .nj-final-btn:hover{background:#E8503F;}
+
+  @media (max-width:480px){
+    #customerView .nj-rate-num{font-size:42px;}
+    #customerView .nj-stamp{width:60px; height:60px; font-size:10px;}
+  }
 </style>
 </head>
 <body>
@@ -484,7 +627,7 @@
   </div>
 </div>
 
-<div class="wrap" id="customerView" style="display:none;"></div>
+<div id="customerView" style="display:none;"></div>
 
 <script>
 const $ = id => document.getElementById(id);
@@ -856,6 +999,78 @@ $('copyPaidLink').addEventListener('click', () => {
   copyToClipboard(url, $('copyPaidLink'));
 });
 
+function cvCompareListHtml(data){
+  const avg = data.industry_avg_rate ?? data.mention_rate;
+  const potential = data.potential_rate ?? data.mention_rate;
+  return `
+    <div class="nj-compare-item">
+      <div class="nj-compare-label"><span>내 언급률</span><b>${data.mention_rate}%</b></div>
+      <div class="nj-compare-track"><div class="nj-compare-fill me" style="width:${data.mention_rate}%"></div></div>
+    </div>
+    <div class="nj-compare-item">
+      <div class="nj-compare-label"><span>업종 평균</span><b>${avg}%</b></div>
+      <div class="nj-compare-track"><div class="nj-compare-fill avg" style="width:${avg}%"></div></div>
+    </div>
+    <div class="nj-compare-item">
+      <div class="nj-compare-label"><span>개선 시 도달 가능</span><b>${potential}%</b></div>
+      <div class="nj-compare-track"><div class="nj-compare-fill potential" style="width:${potential}%"></div></div>
+    </div>`;
+}
+
+function cvKwRowHtml(k){
+  const score = k.score ?? (k.mentioned ? 70 : 20);
+  return `<tr><td>${escapeHtml(k.keyword)}</td>
+    <td><span class="nj-pill ${k.mentioned ? 'yes':'no'}">${k.mentioned ? '언급됨' : '언급 안됨'}</span></td>
+    <td><span class="nj-score-track"><span class="nj-score-fill" style="width:${score}%"></span></span> ${score}</td>
+    <td>${escapeHtml(k.note || '')}</td></tr>`;
+}
+
+function cvCompRowHtml(data, meta){
+  const rows = [{ name: meta.bizName + ' (나)', mention_rate: data.mention_rate, note: '현재 진단 결과', me: true }]
+    .concat((data.competitors || []).map(c => ({ name: c.name, mention_rate: c.mention_rate ?? 0, note: c.note || '', me: false })));
+  rows.sort((a,b) => b.mention_rate - a.mention_rate);
+  return rows.map(r => `<tr class="${r.me ? 'me' : ''}">
+      <td>${escapeHtml(r.name)}</td>
+      <td>${r.mention_rate}%</td>
+      <td>${escapeHtml(r.note)}</td>
+    </tr>`).join('');
+}
+
+function cvImpCardHtml(imp, i, locked){
+  const impactHtml = imp.impact ? `<span class="nj-imp-impact">${escapeHtml(imp.impact)}</span>` : '';
+  const metaBits = [imp.difficulty ? `난이도 ${imp.difficulty}` : '', imp.time_estimate ? `⏱ ${imp.time_estimate}` : ''].filter(Boolean).join(' · ');
+  const stepsHtml = (imp.steps && imp.steps.length) ? `<ol style="margin:8px 0 0; padding-left:18px; display:flex; flex-direction:column; gap:4px;">${imp.steps.map(s=>`<li>${escapeHtml(s)}</li>`).join('')}</ol>` : '';
+  const templateHtml = imp.template ? `<div style="margin-top:10px; background:#fff; border:1px dashed var(--nj-rule); border-radius:8px; padding:10px 12px; font-size:13px;"><b style="color:var(--nj-red); font-size:11.5px;">바로 쓰는 샘플</b><div style="white-space:pre-wrap; margin-top:4px;">${escapeHtml(imp.template)}</div></div>` : '';
+  const body = `
+    <p class="nj-imp-detail">${escapeHtml(imp.detail)}</p>
+    ${metaBits ? `<p class="nj-imp-detail" style="margin-top:4px;">${metaBits}</p>` : ''}
+    ${stepsHtml}
+    ${templateHtml}`;
+  const bodyHtml = locked
+    ? `<div class="nj-locked">${body}</div><p class="nj-lock-note">🔒 실행 단계와 바로 쓰는 샘플은 전체 리포트에서 확인하실 수 있어요</p>`
+    : body;
+  return `<div class="nj-imp-card">
+      <div class="nj-imp-num">${String(i+1).padStart(2,'0')}</div>
+      <div>
+        <p class="nj-imp-title">${escapeHtml(imp.title)}${impactHtml}</p>
+        ${bodyHtml}
+      </div>
+    </div>`;
+}
+
+function cvPlanTableHtml(){
+  return `
+    <table class="nj-plan-table">
+      <thead><tr><th></th><th>무료로 보신 것</th><th class="nj-paid-col">전체 리포트</th></tr></thead>
+      <tbody>
+        <tr><td>언급률 · 등급</td><td class="nj-yes">✓</td><td class="nj-yes">✓</td></tr>
+        <tr><td>키워드 · 경쟁사 비교</td><td class="nj-yes">✓</td><td class="nj-yes">✓</td></tr>
+        <tr><td>실행 체크리스트</td><td class="nj-no">—</td><td class="nj-yes">✓</td></tr>
+        <tr><td>바로 쓰는 샘플 문구</td><td class="nj-no">—</td><td class="nj-yes">✓</td></tr>
+      </tbody>
+    </table>`;
+}
+
 function renderCustomerView(payload){
   const { tier, data, meta } = payload;
   document.getElementById('adminView').style.display = 'none';
@@ -863,40 +1078,66 @@ function renderCustomerView(payload){
   cv.style.display = 'block';
 
   const grade = gradeFor(data.mention_rate);
-  const kwRows = (data.keywords || []).map(kwRowHtml).join('');
-  const compRows = compRowHtml(data, meta);
-  const impCards = (data.improvements || []).map((imp, i) => impCardHtml(imp, i, tier !== 'paid')).join('');
+  const gradeShort = grade.cls.replace('grade-', '');
+  const kwRows = (data.keywords || []).map(cvKwRowHtml).join('');
+  const compRows = cvCompRowHtml(data, meta);
+  const impCards = (data.improvements || []).map((imp, i) => cvImpCardHtml(imp, i, tier !== 'paid')).join('');
+  const bizName = escapeHtml(meta.bizName || '이 가게');
+  const potential = data.potential_rate ?? data.mention_rate;
+  const gap = Math.max(0, potential - data.mention_rate);
 
   cv.innerHTML = `
-    <h1>${escapeHtml(meta.bizName || '')} AI 노출 진단 리포트</h1>
-    <p class="sub">${tier === 'paid' ? '유료 전체 리포트' : '무료 진단 리포트 · 개선 방법은 잠겨 있습니다'}</p>
-    <div class="disclaimer">⚠️ <span>본 리포트는 AI가 업체 정보를 바탕으로 추정한 진단 결과이며, 실시간으로 실제 AI 검색을 조회한 값이 아닙니다.</span></div>
+    <div class="nj-wrap">
+      <div class="nj-header"><span class="nj-logo-stamp">印</span>눈도장</div>
+      <div class="nj-doclabel">진단 결과<span class="nj-line"></span>${tier === 'paid' ? '전체 리포트' : '무료 리포트'}</div>
 
-    <div class="card">
-      <h2 class="section-title">AI 언급률<span class="grade-badge ${grade.cls}">${grade.label}</span></h2>
-      <p class="rate-eyebrow">우리 업체가 AI 답변에 언급될 것으로 추정되는 비율</p>
-      <div class="rate-box">
-        <div class="rate-num">${data.mention_rate}%</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${data.mention_rate}%"></div></div>
+      <h1 class="nj-h1">${bizName}, AI한테<br>이 정도 추천받고 있어요</h1>
+      <p class="nj-sub">${tier === 'paid' ? '신청해주신 전체 리포트예요. 실행 방법까지 전부 담겨 있어요.' : '사장님이 신청하신 무료 진단 결과예요. 개선 방법은 아래에서 살짝 잠겨 있어요.'}</p>
+      <div class="nj-disclaimer">⚠️ <span>이 리포트는 AI가 가게 정보를 바탕으로 추정한 진단 결과이며, 실시간으로 실제 AI 검색을 조회한 값이 아니에요.</span></div>
+
+      <div class="nj-report">
+        <div class="nj-stamp">진단<br>완료</div>
+        <p class="nj-report-eyebrow">AI에게 물어봤을 때 이 가게가 언급될 것으로 추정되는 비율</p>
+        <div class="nj-rate-row">
+          <span class="nj-rate-num">${data.mention_rate}%</span>
+          <span class="nj-grade ${gradeShort}">${grade.label}</span>
+        </div>
+        <div class="nj-compare-list">${cvCompareListHtml(data)}</div>
       </div>
-      <div class="compare-list">${compareListHtml(data)}</div>
-    </div>
 
-    <div class="card">
-      <h2 class="section-title">키워드별 언급 여부</h2>
-      <table class="kw"><thead><tr><th>키워드</th><th>언급</th><th>점수</th><th>비고</th></tr></thead><tbody>${kwRows}</tbody></table>
-    </div>
+      <div class="nj-card">
+        <h2>키워드별 언급 여부</h2>
+        <table><thead><tr><th>키워드</th><th>언급</th><th>점수</th><th>비고</th></tr></thead><tbody>${kwRows}</tbody></table>
+      </div>
 
-    <div class="card">
-      <h2 class="section-title">경쟁업체 노출 현황</h2>
-      <table class="comp-table"><thead><tr><th>업체</th><th>AI 언급률</th><th>비고</th></tr></thead><tbody>${compRows}</tbody></table>
-    </div>
+      <div class="nj-card">
+        <h2>경쟁업체 노출 현황</h2>
+        <table><thead><tr><th>업체</th><th>AI 언급률</th><th>비고</th></tr></thead><tbody>${compRows}</tbody></table>
+      </div>
 
-    ${tier !== 'paid' ? `<div class="cta-card">${ctaCardHtml(data)}</div>` : ''}
+      ${tier !== 'paid' ? `
+      <div class="nj-card">
+        <h2>무료 vs 전체 리포트, 뭐가 다를까요</h2>
+        ${cvPlanTableHtml()}
+      </div>
 
-    <div class="card">
-      <h2 class="section-title">개선 제안</h2>
-      ${impCards}
+      <div class="nj-cta">
+        <h3>지금 개선하면 이만큼 오를 수 있어요</h3>
+        <div class="nj-cta-num">${data.mention_rate}% → ${potential}%</div>
+        <p>개선 제안을 반영하면 최대 +${gap}%p까지 상승 가능한 것으로 추정돼요.</p>
+      </div>` : ''}
+
+      <div class="nj-card">
+        <h2>개선 제안</h2>
+        ${impCards}
+      </div>
+
+      ${tier !== 'paid' ? `
+      <div class="nj-final-cta">
+        <h3>실행 방법까지 전부 받고 싶으신가요?</h3>
+        <p>체크리스트와 바로 쓰는 샘플 문구까지 담긴 전체 리포트를 받아보세요.</p>
+        <a class="nj-final-btn" href="https://eyestamps.netlify.app/#form" target="_blank" rel="noopener">전체 리포트 신청하기</a>
+      </div>` : ''}
     </div>
   `;
 }
