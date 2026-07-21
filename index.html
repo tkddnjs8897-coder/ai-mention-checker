@@ -533,6 +533,46 @@
     font-weight:700; font-size:16px; padding:15px 30px; border-radius:100px;
   }
   #customerView .nj-final-btn:hover{background:#E8503F;}
+  #customerView .nj-final-btn:disabled, #customerView .nj-final-btn.disabled{opacity:.5; cursor:not-allowed;}
+
+  #customerView .nj-back-link{
+    display:inline-block; font-size:13.5px; color:var(--nj-ink-soft); text-decoration:none;
+    margin-bottom:18px; font-weight:600;
+  }
+  #customerView .nj-price-box{
+    background:var(--nj-paper-dim); border-radius:14px; padding:22px; text-align:center; margin-bottom:22px;
+  }
+  #customerView .nj-price-label{font-size:13px; color:var(--nj-ink-soft); font-weight:600; margin-bottom:6px;}
+  #customerView .nj-price-num{font-family:'IBM Plex Mono',monospace; font-weight:800; font-size:34px; color:var(--nj-ink);}
+  #customerView .nj-pay-method{
+    border:1.5px solid var(--nj-ink); border-radius:16px; padding:20px; margin-bottom:16px;
+  }
+  #customerView .nj-pay-method h4{font-size:15px; font-weight:800; margin-bottom:12px; display:flex; align-items:center; gap:8px;}
+  #customerView .nj-pay-row{
+    display:flex; justify-content:space-between; align-items:center; gap:10px;
+    background:#fff; border:1px solid var(--nj-rule); border-radius:10px;
+    padding:12px 14px; margin-bottom:8px; font-size:14px;
+  }
+  #customerView .nj-pay-row:last-child{margin-bottom:0;}
+  #customerView .nj-pay-row .nj-pay-key{color:var(--nj-ink-soft); font-size:12.5px;}
+  #customerView .nj-pay-row .nj-pay-val{font-weight:700; font-family:'IBM Plex Mono',monospace;}
+  #customerView .nj-copy-btn{
+    background:var(--nj-paper-dim); border:1px solid var(--nj-rule); border-radius:8px;
+    padding:6px 12px; font-size:12.5px; font-weight:700; color:var(--nj-ink); cursor:pointer; white-space:nowrap;
+  }
+  #customerView .nj-copy-btn.copied{background:var(--nj-green); color:#fff; border-color:var(--nj-green);}
+  #customerView .nj-kakao-btn{
+    display:block; width:100%; text-align:center; background:#FEE500; color:#191600;
+    font-weight:800; font-size:15px; padding:14px; border-radius:10px; text-decoration:none;
+  }
+  #customerView .nj-pay-note{
+    font-size:13px; color:var(--nj-ink-soft); background:#fff; border:1px dashed var(--nj-rule);
+    border-radius:10px; padding:14px 16px; line-height:1.6; margin-top:6px;
+  }
+  #customerView .nj-todo-note{
+    font-size:12px; color:var(--nj-red); background:rgba(255,91,76,.08); border:1px dashed var(--nj-red);
+    border-radius:8px; padding:8px 12px; margin-top:16px;
+  }
 
   @media (max-width:480px){
     #customerView .nj-rate-num{font-size:42px;}
@@ -630,6 +670,18 @@
 <div id="customerView" style="display:none;"></div>
 
 <script>
+// ▼▼▼ 결제 안내 정보 — 실제 정보로 채워주세요 ▼▼▼
+const PAY_CONFIG = {
+  price: '19,900원',              // 전체 리포트 가격
+  kakaoPayLink: '',               // 카카오페이 송금 링크 (카카오페이 앱 > 송금 > 송금 링크 만들기). 비워두면 카카오페이 버튼이 숨겨집니다
+  bank: {
+    bankName: '',                 // 예: 카카오뱅크
+    account: '',                  // 예: 3333-01-1234567
+    holder: ''                    // 예: 문상원
+  }
+};
+// ▲▲▲ 결제 안내 정보 ▲▲▲
+
 const $ = id => document.getElementById(id);
 
 // restore saved key
@@ -1071,7 +1123,10 @@ function cvPlanTableHtml(){
     </table>`;
 }
 
+let currentCvPayload = null;
+
 function renderCustomerView(payload){
+  currentCvPayload = payload;
   const { tier, data, meta } = payload;
   document.getElementById('adminView').style.display = 'none';
   const cv = document.getElementById('customerView');
@@ -1136,8 +1191,58 @@ function renderCustomerView(payload){
       <div class="nj-final-cta">
         <h3>실행 방법까지 전부 받고 싶으신가요?</h3>
         <p>체크리스트와 바로 쓰는 샘플 문구까지 담긴 전체 리포트를 받아보세요.</p>
-        <a class="nj-final-btn" href="https://eyestamps.netlify.app/#form" target="_blank" rel="noopener">전체 리포트 신청하기</a>
+        <a class="nj-final-btn" href="javascript:void(0)" onclick="renderPaymentView()">전체 리포트 신청하기</a>
       </div>` : ''}
+    </div>
+  `;
+}
+
+function renderPaymentView(){
+  const cv = document.getElementById('customerView');
+  const meta = currentCvPayload ? currentCvPayload.meta : {};
+  const bizName = escapeHtml(meta.bizName || '이 가게');
+  const hasKakao = !!PAY_CONFIG.kakaoPayLink;
+  const hasBank = !!(PAY_CONFIG.bank.account && PAY_CONFIG.bank.bankName);
+  const missingConfig = !hasKakao && !hasBank;
+
+  const kakaoHtml = hasKakao ? `
+    <div class="nj-pay-method">
+      <h4>💛 카카오페이로 송금</h4>
+      <a class="nj-kakao-btn" href="${escapeHtml(PAY_CONFIG.kakaoPayLink)}" target="_blank" rel="noopener">카카오페이로 ${escapeHtml(PAY_CONFIG.price)} 보내기</a>
+    </div>` : '';
+
+  const bankHtml = hasBank ? `
+    <div class="nj-pay-method">
+      <h4>🏦 계좌이체</h4>
+      <div class="nj-pay-row"><span class="nj-pay-key">은행</span><span class="nj-pay-val">${escapeHtml(PAY_CONFIG.bank.bankName)}</span></div>
+      <div class="nj-pay-row">
+        <span><span class="nj-pay-key">계좌번호</span><br><span class="nj-pay-val">${escapeHtml(PAY_CONFIG.bank.account)}</span></span>
+        <button class="nj-copy-btn" onclick="copyToClipboard('${escapeHtml(PAY_CONFIG.bank.account)}', this)">복사</button>
+      </div>
+      <div class="nj-pay-row"><span class="nj-pay-key">예금주</span><span class="nj-pay-val">${escapeHtml(PAY_CONFIG.bank.holder)}</span></div>
+    </div>` : '';
+
+  const missingHtml = missingConfig ? `
+    <div class="nj-todo-note">아직 결제 수단이 설정되지 않았어요. index.html 상단의 PAY_CONFIG에 카카오페이 링크나 계좌 정보를 채워주세요.</div>` : '';
+
+  cv.innerHTML = `
+    <div class="nj-wrap">
+      <div class="nj-header"><span class="nj-logo-stamp">印</span>눈도장</div>
+      <a class="nj-back-link" href="javascript:void(0)" onclick="renderCustomerView(currentCvPayload)">← 진단 리포트로 돌아가기</a>
+
+      <h1 class="nj-h1">전체 리포트 신청</h1>
+      <p class="nj-sub">${bizName} 사장님, 아래 방법으로 결제해주시면 실행 체크리스트와 샘플 문구까지 담긴 전체 리포트를 보내드려요.</p>
+
+      <div class="nj-price-box">
+        <div class="nj-price-label">전체 리포트 가격</div>
+        <div class="nj-price-num">${escapeHtml(PAY_CONFIG.price)}</div>
+      </div>
+
+      ${kakaoHtml}
+      ${bankHtml}
+      ${missingHtml}
+
+      <p class="nj-pay-note">💬 입금이 확인되면 남겨주신 연락처로 24시간 내에 전체 리포트 링크를 보내드려요. 궁금한 점이 있으시면 편하게 문의해주세요.</p>
     </div>
   `;
 }
