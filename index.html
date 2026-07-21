@@ -1054,11 +1054,18 @@ $('copyPaid').addEventListener('click', () => {
   copyToClipboard(buildPaidReport(currentData, currentMeta), $('copyPaid'));
 });
 
+// URL-안전 base64(RFC 4648 §5) — 카카오톡 등 일부 메신저의 링크 자동 인식기가
+// 표준 base64의 +, /, = 문자를 URL 일부로 제대로 못 읽고 잘라내는 문제를 피하기 위함
 function encodePayload(obj){
-  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))));
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
 }
 function decodePayload(str){
-  return JSON.parse(decodeURIComponent(escape(atob(str))));
+  let b64 = str.replace(/-/g, '+').replace(/_/g, '/');
+  while (b64.length % 4) b64 += '=';
+  return JSON.parse(decodeURIComponent(escape(atob(b64))));
 }
 
 // 무료 링크에서는 어차피 블러 처리돼 안 보이는 상세 필드(detail/steps/template 등)를 빼서
