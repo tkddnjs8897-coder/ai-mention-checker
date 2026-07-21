@@ -685,7 +685,7 @@ function buildPrompt(meta){
   ]
 }
 
-keywords는 입력된 모든 키워드에 대해 각각 생성하고, competitors는 2~4개, improvements는 4~5개 생성하세요. improvements의 impact 합은 potential_rate - mention_rate와 대략 비슷하게 맞추세요. improvements 중 최소 2개 이상은 template을 실질적으로 채워서, 사용자가 그대로 복사해 쓸 수 있게 하세요.`;
+keywords는 입력된 모든 키워드에 대해 각각 생성하고, competitors는 정확히 3개, improvements는 4~5개 생성하세요. improvements의 impact 합은 potential_rate - mention_rate와 대략 비슷하게 맞추세요. improvements 중 최소 2개 이상은 template을 실질적으로 채워서, 사용자가 그대로 복사해 쓸 수 있게 하세요.`;
 }
 
 async function callClaude(apiKey, prompt){
