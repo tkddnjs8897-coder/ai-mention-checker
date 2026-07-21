@@ -573,6 +573,32 @@
     font-size:12px; color:var(--nj-red); background:rgba(255,91,76,.08); border:1px dashed var(--nj-red);
     border-radius:8px; padding:8px 12px; margin-top:16px;
   }
+  #customerView .nj-order-code{
+    display:inline-block; margin-top:10px; font-family:'IBM Plex Mono',monospace;
+    font-weight:800; font-size:16px; color:var(--nj-red);
+    background:#fff; border:1.5px dashed var(--nj-red); border-radius:8px; padding:6px 14px;
+  }
+  #customerView .nj-notify-card{
+    background:var(--nj-paper-dim); border-radius:16px; padding:20px; margin-top:6px;
+  }
+  #customerView .nj-notify-card h4{font-size:15px; font-weight:800; margin-bottom:4px;}
+  #customerView .nj-notify-card .nj-hint{font-size:12.5px; color:var(--nj-ink-soft); margin-bottom:14px;}
+  #customerView .nj-field{margin-bottom:10px;}
+  #customerView .nj-field label{display:block; font-size:12.5px; font-weight:600; color:var(--nj-ink-soft); margin-bottom:5px;}
+  #customerView .nj-field input{
+    width:100%; padding:11px 13px; font-family:inherit; font-size:14px;
+    background:#fff; border:1px solid var(--nj-rule); border-radius:8px; color:var(--nj-ink);
+  }
+  #customerView .nj-field input:focus{outline:2px solid var(--nj-ink); outline-offset:1px;}
+  #customerView .nj-notify-btn{
+    width:100%; margin-top:6px; padding:13px; border:none; border-radius:100px;
+    background:var(--nj-ink); color:#fff; font-weight:700; font-size:14.5px; cursor:pointer;
+  }
+  #customerView .nj-notify-btn:disabled{opacity:.6; cursor:not-allowed;}
+  #customerView .nj-notify-success{
+    background:rgba(31,174,122,.1); border:1px solid var(--nj-green); border-radius:12px;
+    padding:16px; font-size:13.5px; color:var(--nj-ink); line-height:1.6;
+  }
 
   @media (max-width:480px){
     #customerView .nj-rate-num{font-size:42px;}
@@ -1197,6 +1223,12 @@ function renderCustomerView(payload){
   `;
 }
 
+let currentOrderCode = null;
+
+function genOrderCode(){
+  return 'ND-' + Math.floor(1000 + Math.random() * 9000);
+}
+
 function renderPaymentView(){
   const cv = document.getElementById('customerView');
   const meta = currentCvPayload ? currentCvPayload.meta : {};
@@ -1204,6 +1236,7 @@ function renderPaymentView(){
   const hasKakao = !!PAY_CONFIG.kakaoPayLink;
   const hasBank = !!(PAY_CONFIG.bank.account && PAY_CONFIG.bank.bankName);
   const missingConfig = !hasKakao && !hasBank;
+  if (!currentOrderCode) currentOrderCode = genOrderCode();
 
   const kakaoHtml = hasKakao ? `
     <div class="nj-pay-method">
@@ -1236,20 +1269,79 @@ function renderPaymentView(){
       <div class="nj-price-box">
         <div class="nj-price-label">전체 리포트 가격</div>
         <div class="nj-price-num">${escapeHtml(PAY_CONFIG.price)}</div>
+        <div><span class="nj-order-code">${currentOrderCode}</span></div>
+        <p class="nj-hint" style="margin-top:8px;">입금하실 때 입금자명(또는 메모)에 <b>${currentOrderCode}</b>를 남겨주시면 확인이 훨씬 빨라요</p>
       </div>
 
       ${kakaoHtml}
       ${bankHtml}
       ${missingHtml}
 
+      <div class="nj-notify-card" id="notifyCard">
+        <h4>💬 입금 완료했어요</h4>
+        <p class="nj-hint">입금 후 아래를 남겨주시면 확인되는 대로 전체 리포트를 보내드려요</p>
+        <div class="nj-field">
+          <label for="payerContact">연락받으실 이메일 또는 휴대폰 번호</label>
+          <input id="payerContact" type="text" placeholder="example@email.com 또는 010-0000-0000">
+        </div>
+        <div class="nj-field">
+          <label for="payerName">입금자명 (계좌이체하신 실제 이름)</label>
+          <input id="payerName" type="text" placeholder="예: 문상원">
+        </div>
+        <button class="nj-notify-btn" id="notifyBtn" onclick="submitPaymentNotice()">입금 완료 알림 보내기</button>
+      </div>
+
       <p class="nj-pay-note">💬 입금이 확인되면 남겨주신 연락처로 24시간 내에 전체 리포트 링크를 보내드려요. 궁금한 점이 있으시면 편하게 문의해주세요.</p>
     </div>
   `;
 }
 
+async function submitPaymentNotice(){
+  const contact = document.getElementById('payerContact').value.trim();
+  const payerName = document.getElementById('payerName').value.trim();
+  if (!contact){
+    alert('연락받으실 이메일 또는 휴대폰 번호를 입력해주세요.');
+    return;
+  }
+
+  const meta = currentCvPayload ? currentCvPayload.meta : {};
+  const btn = document.getElementById('notifyBtn');
+  btn.disabled = true;
+  btn.textContent = '전송 중...';
+
+  try{
+    const res = await fetch('https://formspree.io/f/xaqrjoya', {
+      method: 'POST',
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        구분: '전체 리포트 결제 알림',
+        주문코드: currentOrderCode,
+        가게명: meta.bizName || '',
+        입금자명: payerName,
+        연락처: contact,
+        결제금액: PAY_CONFIG.price
+      })
+    });
+
+    const card = document.getElementById('notifyCard');
+    if (res.ok){
+      card.innerHTML = `<div class="nj-notify-success">✅ 알림을 보냈어요! 주문코드 <b>${currentOrderCode}</b>로 입금 확인되는 대로 전체 리포트를 보내드릴게요.</div>`;
+    } else {
+      btn.disabled = false;
+      btn.textContent = '입금 완료 알림 보내기';
+      alert('전송 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.');
+    }
+  }catch(e){
+    btn.disabled = false;
+    btn.textContent = '입금 완료 알림 보내기';
+    alert('전송 중 문제가 발생했어요. 잠시 후 다시 시도해주세요.');
+  }
+}
+
 function checkHashAndRenderCustomerView(){
   if (location.hash.startsWith('#r=')){
     try{
+      currentOrderCode = null;
       renderCustomerView(decodePayload(location.hash.slice(3)));
     }catch(e){
       console.error('공유 링크 데이터를 읽지 못했습니다.', e);
