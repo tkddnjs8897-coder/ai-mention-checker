@@ -1061,9 +1061,18 @@ function decodePayload(str){
   return JSON.parse(decodeURIComponent(escape(atob(str))));
 }
 
+// 무료 링크에서는 어차피 블러 처리돼 안 보이는 상세 필드(detail/steps/template 등)를 빼서
+// 링크 길이를 줄인다 — 카카오톡/문자로 옮길 때 잘려서 깨지는 걸 방지하기 위함
+function freeSafeData(data){
+  return {
+    ...data,
+    improvements: (data.improvements || []).map(imp => ({ title: imp.title, impact: imp.impact }))
+  };
+}
+
 $('copyFreeLink').addEventListener('click', () => {
   if (!currentData) return;
-  const url = location.href.split('#')[0] + '#r=' + encodePayload({ tier:'free', data: currentData, meta: currentMeta });
+  const url = location.href.split('#')[0] + '#r=' + encodePayload({ tier:'free', data: freeSafeData(currentData), meta: currentMeta });
   copyToClipboard(url, $('copyFreeLink'));
 });
 $('copyPaidLink').addEventListener('click', () => {
@@ -1323,12 +1332,26 @@ async function submitPaymentNotice(){
   }
 }
 
+function renderLinkBrokenView(){
+  document.getElementById('adminView').style.display = 'none';
+  const cv = document.getElementById('customerView');
+  cv.style.display = 'block';
+  cv.innerHTML = `
+    <div class="nj-wrap">
+      <div class="nj-header"><span class="nj-logo-stamp">印</span>눈도장</div>
+      <h1 class="nj-h1">링크를 열 수 없어요</h1>
+      <p class="nj-sub">전달받으신 링크가 옮기는 과정에서 잘리거나 손상된 것 같아요. 리포트를 보내주신 분께 링크를 다시 요청해주세요.</p>
+      <div class="nj-disclaimer">⚠️ <span>카카오톡·문자 등으로 링크를 옮길 때 일부가 잘리면 이런 문제가 생길 수 있어요. 가능하면 링크를 통째로 복사해서 새 메시지에 붙여넣어 다시 보내달라고 요청해보세요.</span></div>
+    </div>`;
+}
+
 function checkHashAndRenderCustomerView(){
   if (location.hash.startsWith('#r=')){
     try{
       renderCustomerView(decodePayload(location.hash.slice(3)));
     }catch(e){
       console.error('공유 링크 데이터를 읽지 못했습니다.', e);
+      renderLinkBrokenView();
     }
   }
 }
