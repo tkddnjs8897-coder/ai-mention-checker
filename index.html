@@ -1077,15 +1077,40 @@ function freeSafeData(data){
   };
 }
 
+// 링크 자체가 길면 카카오톡 등 메신저의 자동 링크 인식이 일부만 잡고 나머지를 잘라버려서
+// 눌러도 깨진 주소로 열리는 문제가 있었음 — TinyURL로 짧게 줄여서 이 문제를 피한다.
+async function shortenUrl(longUrl){
+  try{
+    const res = await fetch('https://tinyurl.com/api-create.php?url=' + encodeURIComponent(longUrl));
+    if (!res.ok) throw new Error('shorten request failed: ' + res.status);
+    const short = (await res.text()).trim();
+    if (!short.startsWith('http')) throw new Error('unexpected shortener response: ' + short);
+    return short;
+  }catch(e){
+    console.error('링크 단축에 실패해서 원본 링크를 그대로 씁니다.', e);
+    return longUrl;
+  }
+}
+
+async function copyShortLink(longUrl, btn){
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '짧은 링크 만드는 중...';
+  const shortUrl = await shortenUrl(longUrl);
+  btn.disabled = false;
+  btn.textContent = orig;
+  copyToClipboard(shortUrl, btn);
+}
+
 $('copyFreeLink').addEventListener('click', () => {
   if (!currentData) return;
   const url = location.href.split('#')[0] + '#r=' + encodePayload({ tier:'free', data: freeSafeData(currentData), meta: currentMeta });
-  copyToClipboard(url, $('copyFreeLink'));
+  copyShortLink(url, $('copyFreeLink'));
 });
 $('copyPaidLink').addEventListener('click', () => {
   if (!currentData) return;
   const url = location.href.split('#')[0] + '#r=' + encodePayload({ tier:'paid', data: currentData, meta: currentMeta });
-  copyToClipboard(url, $('copyPaidLink'));
+  copyShortLink(url, $('copyPaidLink'));
 });
 
 function cvCompareListHtml(data){
